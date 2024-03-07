@@ -187,11 +187,13 @@ sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman
     !debug lto)/" /etc/makepkg.conf
 
 # setup yay
+cd /home/$USER
 git clone https://aur.archlinux.org/yay.git
 cd yay
 sudo -H -u $USER bash -c makepkg -si
 cd ..
 rm -rf yay
+cd /
 
 # install yay packages
 yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
