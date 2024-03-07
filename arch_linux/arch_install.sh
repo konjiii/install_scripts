@@ -197,25 +197,26 @@ cd /
 
 # install yay packages
 yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
-    visual-studio-code-insiders-bin nordvpn-bin
+    visual-studio-code-insiders-bin nordvpn-bin --noconfirm --needed
 
 # install packages depending on device
 if [ "$DEVICE" == "laptop" ];
 then
     pacman -Syu tlp tlp-rdw smartmontools brightnessctl powertop\
-        wifi-qr
-    yay -S optimus-manager optimus-manager-qt
+        wifi-qr --noconfirm --needed
+
+    yay -S optimus-manager optimus-manager-qt --noconfirm --needed
 elif [ "$DEVICE" == "desktop" ];
 then
-    pacman -S picom
+    pacman -S picom --noconfirm --needed
 fi
 if [ "$CPU" == "intel" ];
 then
-    pacman -S intel-media-driver libva-utils
+    pacman -S intel-media-driver libva-utils --noconfirm --needed
 fi
 if [ "$GPU" == "nvidia" ];
 then
-    pacman -S nvidia-lts nvidia-settings
+    pacman -S nvidia-lts nvidia-settings --noconfirm --needed
 fi
 
 # enable services
