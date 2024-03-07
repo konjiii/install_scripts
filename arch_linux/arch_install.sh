@@ -85,6 +85,9 @@ mount /dev/$ROOT /mnt
 mount --mkdir /dev/$EFI /mnt/boot
 swapon /dev/$SWAP
 
+# turn on parallel downloads
+sed -i "s/#ParallelDownloads = 5/ParallelDownloads = 5/" /etc/pacman.conf
+
 # install packages
 pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmware git sudo\
     neofetch htop $CPU-ucode ark bluez bluez-utils btop chezmoi clang cmake copyq discord\
@@ -103,13 +106,13 @@ genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
 while :
 do
-    echo "was the fstab generated correctly?"
+    echo "was the fstab generated correctly? (yes/no)"
     read ANSW
 
-    if [ "$ANSW" == yes ];
+    if [ "$ANSW" == "yes" ] || [ "$ANSW" == "y" ];
     then
         break
-    elif [ "ANSW" == no ];
+    elif [ "$ANSW" == "no" ] || [ "$ANSW" == "n" ];
     then
         echo "please correct the errors"
         read _
