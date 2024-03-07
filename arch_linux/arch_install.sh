@@ -161,6 +161,9 @@ echo root:$PASS | chpasswd
 useradd -m -G wheel,video -s /bin/bash $USER
 echo $USER:$PASS | chpasswd
 
+# give sudo access to wheel group
+sed -i "s/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
+
 # install grub
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
