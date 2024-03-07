@@ -97,8 +97,7 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
     dosfstools dunst dust efibootmgr feh firewalld fuse2 gimp git\
     github-cli go grub htop i3-wm i3lock imagemagick ipython kitty krita\
     libqalculate libreoffice-fresh lightdm lightdm-slick-greeter links maim\
-    mpv mtools neofetch neovim networkmanager nordvpn-bin notification-daemon noto-fonts\
-    noto-fonts-cjk\
+    mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
     pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi spotify-launcher\
     sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
@@ -121,7 +120,7 @@ do
     then
         echo "please correct the errors"
         read _
-        nvim /mnt/etc/fstab
+        vim /mnt/etc/fstab
         break
     else
         echo "invalid input"
@@ -139,7 +138,7 @@ systemctl enable systemd-timesyncd
 # set and generate locales
 sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen
 locale-gen
-echo "LANG=en_US.UTF-8 > /etc/locale.conf
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 # set hostname and hosts
 echo "archlinux" > /etc/hostname
@@ -190,7 +189,7 @@ chezmoi init --apply https://github.com/konjiii/dotfiles.git
 
 # install yay packages
 yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
-    visual-studio-code-insiders-bin
+    visual-studio-code-insiders-bin nordvpn-bin
 
 # install packages depending on device
 if [ "$DEVICE" == "laptop" ];
@@ -231,7 +230,7 @@ then
 
     [Install]
     WantedBy=sleep.target
-    I3LOCK
+I3LOCK
     
     # enable powertop auto-tune on boot
     cat <<POWERTOP > /etc/systemd/system/powertop.service
@@ -245,13 +244,15 @@ then
 
     [Install]
     WantedBy=multi-user.target
-    POWERTOP
+POWERTOP
 
     systemctl enable i3lock
     systemctl enable powertop
 fi
 
-# remove post_chroot.sh
+systemctl enable post_reboot
+
+# remove post chroot script
 rm /post_chroot.sh
 EOF
 
@@ -263,9 +264,19 @@ then
     sed -i "s/^startup_mode=.*/startup_mode=auto/" /etc/optimus-manager/optimus-manager.conf
 fi
 
+# add windows to grub menu
+sed -i "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=20/" /etc/default/grub
+sed -i "s/^#GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/" /etc/default/grub
+
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+# remove post reboot script
 systemctl disable post_reboot
 rm /etc/systemd/system/post_reboot.service
 rm /post_reboot.sh
+
+# reboot to finish installation
+reboot
 EOF
 
 # add service to run post_reboot.sh on startup
@@ -281,11 +292,11 @@ ExecStart=/bin/bash /post_reboot.sh
 WantedBy=multi-user.target
 EOF
 
-systemctl enable post_reboot
-
 # chroot into the new system
-arch-chroot /mnt bash /post_chroot.sh
+arch-chroot /mnt sh /post_chroot.sh
 
 # unmount and reboot
 umount -R /mnt
+echo "installation complete, rebooting in 5 seconds"
+sleep 5
 reboot
