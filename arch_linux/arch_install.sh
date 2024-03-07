@@ -88,8 +88,9 @@ mount /dev/$ROOT /mnt
 mount --mkdir /dev/$EFI /mnt/boot
 swapon /dev/$SWAP
 
-# turn on parallel downloads
+# turn on parallel downloads and multilib
 sed -i "s/#ParallelDownloads = 5/ParallelDownloads = 5/" /etc/pacman.conf
+sed -i "s/#\[multilib\]\n#Include.*/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
 
 # install packages
 pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmware git sudo\
@@ -157,7 +158,7 @@ HOSTS
 echo root:$PASS | chpasswd
 
 # create user
-useradd -m -G wheel -s /bin/bash $USER
+useradd -m -G wheel,video -s /bin/bash $USER
 echo $USER:$PASS | chpasswd
 
 # install grub
@@ -167,6 +168,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # change pacman configuration
 sed -i "s/#Color/Color/" /etc/pacman.conf
 sed -i "s/#ParallelDownloads = 5/ParallelDownloads = 5\nILoveCandy/" /etc/pacman.conf
+sed -i "s/#\[multilib\]\n#Include.*/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
 
 # change lightdm configuration
 sed -i "s/^#greeter-session=.*/greeter-session=lightdm-slick-greeter/" /etc/lightdm/lightdm.conf
@@ -177,15 +179,16 @@ clock-format=%H:%M:%S
 draw-grid=false
 GREETER
 
+# change makepkg configuration
+sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman purge\
+    !debug lto)/" /etc/makepkg.conf
+
 # setup yay
 git clone https://aur.archlinux.org/yay.git
 cd yay
-makepkg -si
+sudo -H -u $USER bash -c makepkg -si
 cd ..
 rm -rf yay
-
-# setup chezmoi
-chezmoi init --apply https://github.com/konjiii/dotfiles.git
 
 # install yay packages
 yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
@@ -197,6 +200,9 @@ then
     pacman -Syu tlp tlp-rdw smartmontools brightnessctl powertop\
         wifi-qr
     yay -S optimus-manager optimus-manager-qt
+elif [ "$DEVICE" == "desktop" ];
+then
+    pacman -S picom
 fi
 if [ "$CPU" == "intel" ];
 then
@@ -269,6 +275,9 @@ sed -i "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=20/" /etc/default/grub
 sed -i "s/^#GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/" /etc/default/grub
 
 sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+# setup chezmoi
+chezmoi init --apply https://github.com/konjiii/dotfiles.git
 
 # remove post reboot script
 systemctl disable post_reboot
