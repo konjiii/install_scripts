@@ -94,15 +94,15 @@ sed -i "s/#\[multilib\]\n#Include.*/\[multilib\]\nInclude = \/etc\/pacman.d\/mir
 
 # install packages
 pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmware git sudo\
-    neofetch htop $CPU-ucode ark bluez bluez-utils btop chezmoi clang cmake copyq discord\
+    neofetch htop $CPU-ucode ark atuin bluez bluez-utils btop chezmoi clang cmake copyq discord\
     dosfstools dunst dust efibootmgr feh firewalld fuse2 gimp git\
     github-cli go grub htop i3-wm i3lock imagemagick ipython kitty krita\
     libqalculate libreoffice-fresh lightdm lightdm-slick-greeter links maim\
     mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
-    pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi spotify-launcher\
+    pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest spotify-launcher\
     sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
-    trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome vim virtualbox\
+    trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome usbutils vim virtualbox\
     wget xclip xcolor xorg zbar
 
 # generate fstab

@@ -30,9 +30,25 @@ then
     yay -Syu optimus-manager optimus-manager-qt --noconfirm --needed
 fi
 
+# install rustup and rust-analyzer
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+rustup component add rust-analyzer
 
 # setup chezmoi
 chezmoi init --apply https://github.com/konjiii/dotfiles.git
+
+# turn off wake on mouse
+attrs=$(lsusb | grep Logitech | awk '{print $6;}')
+idVendor=$(echo $attrs | cut -d':' -f1)
+idProduct=$(echo $attrs | cut -d':' -f2)
+usbController=$(grep $idProduct /sys/bus/usb/devices/*/idProduct | cut -d'/' -f6)
+
+sudo sh -c 'cat <<EOF > /etc/udev/rules.d/50-wake-on-device.rules
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="$idVendor", \
+ATTRS{idProduct}=="$idProduct", ATTR{power/wakeup}="disabled", \
+ATTR{driver/$usbController/power/wakeup}="disabled"
+EOF'
 
 # remove post reboot script
 rm ~/post_reboot.sh
