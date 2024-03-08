@@ -44,11 +44,17 @@ idVendor=$(echo $attrs | cut -d':' -f1)
 idProduct=$(echo $attrs | cut -d':' -f2)
 usbController=$(grep $idProduct /sys/bus/usb/devices/*/idProduct | cut -d'/' -f6)
 
-sudo sh -c 'cat <<EOF > /etc/udev/rules.d/50-wake-on-device.rules
+cat <<EOF > ./mouse_wake.sh
+cat <<MOUSE > /etc/udev/rules.d/50-wake-on-device.rules
 ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="$idVendor", \
 ATTRS{idProduct}=="$idProduct", ATTR{power/wakeup}="disabled", \
 ATTR{driver/$usbController/power/wakeup}="disabled"
-EOF'
+MOUSE
+EOF
+
+sudo sh ./mouse_wake.sh
+
+rm ./mouse_wake.sh
 
 # remove post reboot script
 rm ~/post_reboot.sh
