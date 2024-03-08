@@ -193,15 +193,15 @@ then
         wifi-qr --noconfirm --needed
 elif [ "$DEVICE" == "desktop" ];
 then
-    pacman -S picom --noconfirm --needed
+    pacman -Syu picom --noconfirm --needed
 fi
 if [ "$CPU" == "intel" ];
 then
-    pacman -S intel-media-driver libva-utils --noconfirm --needed
+    pacman -Syu intel-media-driver libva-utils --noconfirm --needed
 fi
 if [ "$GPU" == "nvidia" ];
 then
-    pacman -S nvidia-lts nvidia-settings --noconfirm --needed
+    pacman -Syu nvidia-lts nvidia-settings --noconfirm --needed
 fi
 
 # enable services
@@ -247,68 +247,11 @@ POWERTOP
     systemctl enable powertop
 fi
 
-systemctl enable post_reboot
+curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/post_reboot.sh\
+    > /home/$USER/post_reboot.sh
 
 # remove post chroot script
 rm /post_chroot.sh
-EOF
-
-# make the script that runs after rebooting
-cat <<EOF > /mnt/post_reboot.sh
-# set up optimus-manager
-if [ "$DEVICE" == "laptop" ];
-then
-    sed -i "s/^startup_mode=.*/startup_mode=auto/" /etc/optimus-manager/optimus-manager.conf
-fi
-
-# add windows to grub menu
-sed -i "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=20/" /etc/default/grub
-sed -i "s/^#GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/" /etc/default/grub
-
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-# setup yay
-cd /home/$USER
-git clone https://aur.archlinux.org/yay.git
-cd yay
-sudo -H -u $USER bash -c makepkg -si
-cd ..
-rm -rf yay
-cd /
-
-# install yay packages
-yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
-    visual-studio-code-insiders-bin nordvpn-bin --noconfirm --needed
-
-if [ "$DEVICE" == "laptop" ];
-then
-    yay -S optimus-manager optimus-manager-qt --noconfirm --needed
-fi
-
-
-# setup chezmoi
-chezmoi init --apply https://github.com/konjiii/dotfiles.git
-
-# remove post reboot script
-systemctl disable post_reboot
-rm /etc/systemd/system/post_reboot.service
-rm /post_reboot.sh
-
-# reboot to finish installation
-reboot
-EOF
-
-# add service to run post_reboot.sh on startup
-cat <<EOF > /mnt/etc/systemd/system/post_reboot.service
-[Unit]
-Description=Run post_reboot.sh
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash /post_reboot.sh
-
-[Install]
-WantedBy=multi-user.target
 EOF
 
 # chroot into the new system
