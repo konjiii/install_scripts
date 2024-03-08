@@ -108,26 +108,6 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
 # generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 
-cat /mnt/etc/fstab
-while :
-do
-    echo "was the fstab generated correctly? (yes/no)"
-    read ANSW
-
-    if [ "$ANSW" == "yes" ] || [ "$ANSW" == "y" ];
-    then
-        break
-    elif [ "$ANSW" == "no" ] || [ "$ANSW" == "n" ];
-    then
-        echo "please correct the errors"
-        read _
-        vim /mnt/etc/fstab
-        break
-    else
-        echo "invalid input"
-    fi
-done
-
 # make the script that runs after chrooting
 cat <<EOF > /mnt/post_chroot.sh
 # set timezone
