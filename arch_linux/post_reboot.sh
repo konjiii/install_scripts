@@ -35,7 +35,7 @@ fi
 chezmoi init --apply https://github.com/konjiii/dotfiles.git
 
 # remove post reboot script
-rm /post_reboot.sh
+rm ~/post_reboot.sh
 
 # reboot to finish installation
 reboot
