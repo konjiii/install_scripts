@@ -121,6 +121,18 @@ sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
+# set keyboard config
+cat <<KEYBOARD > /etc/X11/xorg.conf.d/00-keyboard.conf
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "us"
+        Option "XkbModel" "pc105"
+        Option "XkbVariant" ",qwerty"
+        Option "XkbOptions" "caps:escape,altwin:swap_lalt_lwin"
+EndSection
+KEYBOARD
+
 # set hostname and hosts
 echo "archlinux" > /etc/hostname
 
