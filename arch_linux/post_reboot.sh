@@ -16,7 +16,7 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 cd /home/$USER
 git clone https://aur.archlinux.org/yay.git
 cd yay
-makepkg -si
+makepkg -si --noconfirm --needed
 cd ..
 rm -rf yay
 cd /
