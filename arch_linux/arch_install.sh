@@ -162,7 +162,7 @@ useradd -m -G wheel,video -s /bin/bash $USER
 echo $USER:$PASS | chpasswd
 
 # give sudo access to wheel group
-sed -i "s/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
+sed -i "s/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
 # install grub
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
@@ -171,7 +171,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # change pacman configuration
 sed -i "s/#Color/Color/" /etc/pacman.conf
 sed -i "s/#ParallelDownloads = 5/ParallelDownloads = 5\nILoveCandy/" /etc/pacman.conf
-sed -i "s/#\[multilib\]\n#Include.*/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
+sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
 
 # change lightdm configuration
 sed -i "s/^#greeter-session=.*/greeter-session=lightdm-slick-greeter/" /etc/lightdm/lightdm.conf
@@ -184,28 +184,13 @@ GREETER
 
 # change makepkg configuration
 sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman purge\
-    !debug lto)/" /etc/makepkg.conf
-
-# setup yay
-cd /home/$USER
-git clone https://aur.archlinux.org/yay.git
-cd yay
-sudo -H -u $USER bash -c makepkg -si
-cd ..
-rm -rf yay
-cd /
-
-# install yay packages
-yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
-    visual-studio-code-insiders-bin nordvpn-bin --noconfirm --needed
+ !debug lto)/" /etc/makepkg.conf
 
 # install packages depending on device
 if [ "$DEVICE" == "laptop" ];
 then
     pacman -Syu tlp tlp-rdw smartmontools brightnessctl powertop\
         wifi-qr --noconfirm --needed
-
-    yay -S optimus-manager optimus-manager-qt --noconfirm --needed
 elif [ "$DEVICE" == "desktop" ];
 then
     pacman -S picom --noconfirm --needed
@@ -281,6 +266,25 @@ sed -i "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=20/" /etc/default/grub
 sed -i "s/^#GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/" /etc/default/grub
 
 sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+# setup yay
+cd /home/$USER
+git clone https://aur.archlinux.org/yay.git
+cd yay
+sudo -H -u $USER bash -c makepkg -si
+cd ..
+rm -rf yay
+cd /
+
+# install yay packages
+yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
+    visual-studio-code-insiders-bin nordvpn-bin --noconfirm --needed
+
+if [ "$DEVICE" == "laptop" ];
+then
+    yay -S optimus-manager optimus-manager-qt --noconfirm --needed
+fi
+
 
 # setup chezmoi
 chezmoi init --apply https://github.com/konjiii/dotfiles.git
