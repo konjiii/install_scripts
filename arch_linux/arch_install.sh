@@ -100,7 +100,7 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
     libqalculate libreoffice-fresh lightdm lightdm-slick-greeter links maim\
     mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
-    pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest spotify-launcher\
+    pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
     starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
     trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome usbutils vim virtualbox\
     wget xclip xcolor xorg zbar
