@@ -10,6 +10,22 @@ fi
 sudo sed -i "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=20/" /etc/default/grub
 sudo sed -i "s/^#GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/" /etc/default/grub
 
+lsblk
+
+while :
+do
+    echo "enter windows EFI partition:"
+    read WIN_EFI
+    echo "you entered $WIN_EFI, is this correct? (y/n)"
+    read ans
+    if [ "$ans" == "y" ];
+    then
+        break
+    fi
+done
+
+sudo mount /dev/$WIN_EFI /boot/EFI
+
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # setup yay
