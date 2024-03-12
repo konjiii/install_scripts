@@ -28,22 +28,22 @@ sudo mount /dev/$WIN_EFI /boot/EFI
 
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
-# setup yay
+# setup paru
 cd /home/$USER
-git clone https://aur.archlinux.org/yay.git
-cd yay
+git clone https://aur.archlinux.org/paru.git
+cd paru
 makepkg -si --noconfirm --needed
 cd ..
-rm -rf yay
+rm -rf paru
 cd /
 
-# install yay packages
-yay -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
+# install paru packages
+paru -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
     visual-studio-code-insiders-bin nordvpn-bin --noconfirm --needed
 
 if [ "$DEVICE" == "laptop" ];
 then
-    yay -Syu optimus-manager optimus-manager-qt --noconfirm --needed
+    paru -Syu optimus-manager optimus-manager-qt --noconfirm --needed
 fi
 
 # install rustup and rust-analyzer
