@@ -150,7 +150,7 @@ HOSTS
 echo root:$PASS | chpasswd
 
 # create user
-useradd -m -G wheel,video,audio,games -s /bin/bash $USER
+useradd -m -G users,wheel,video,audio,games -s /bin/bash $USER
 echo $USER:$PASS | chpasswd
 
 # give sudo access to wheel group
