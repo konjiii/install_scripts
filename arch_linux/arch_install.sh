@@ -103,7 +103,7 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
     pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
     starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
     trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome usbutils vim virtualbox\
-    wget xclip xcolor xorg zbar
+    wget xclip xcolor xorg yazi zbar
 
 # generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
