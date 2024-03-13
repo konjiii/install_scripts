@@ -102,7 +102,7 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
     pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
     starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
-    trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome usbutils vim virtualbox\
+    trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome unarchiver usbutils vim virtualbox\
     wget xclip xcolor xorg yazi zbar
 
 # generate fstab
