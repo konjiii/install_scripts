@@ -26,6 +26,8 @@ done
 
 sudo mount /dev/$WIN_EFI /boot/EFI
 
+sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3\"/" /etc/default/grub
+
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # setup paru
