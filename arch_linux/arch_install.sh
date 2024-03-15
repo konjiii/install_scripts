@@ -100,7 +100,7 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
     libqalculate libreoffice-fresh links maim\
     mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
-    pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
+    pavucontrol pipewire-pulse python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
     starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
     trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome unarchiver usbutils vim virtualbox\
     wget xclip xcolor xorg xorg-xinit yazi zbar zsh
@@ -173,10 +173,10 @@ sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman
 if [ "$DEVICE" == "laptop" ];
 then
     pacman -Syu tlp tlp-rdw smartmontools brightnessctl powertop\
-        wifi-qr --noconfirm --needed
+        wifi-qr i3status --noconfirm --needed
 elif [ "$DEVICE" == "desktop" ];
 then
-    pacman -Syu picom --noconfirm --needed
+    pacman -Syu picom polybar --noconfirm --needed
 fi
 if [ "$CPU" == "intel" ];
 then
