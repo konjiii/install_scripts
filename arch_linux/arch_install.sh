@@ -97,13 +97,13 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
     neofetch htop $CPU-ucode ark atuin biber bluez bluez-utils btop chezmoi clang cmake copyq discord\
     dosfstools dunst dust efibootmgr feh firewalld fuse2 gimp git\
     github-cli go grub htop i3-wm i3lock imagemagick ipython kitty krita\
-    libqalculate libreoffice-fresh lightdm lightdm-slick-greeter links maim\
+    libqalculate libreoffice-fresh links maim\
     mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
     pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
     starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
     trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome unarchiver usbutils vim virtualbox\
-    wget xclip xcolor xorg yazi zbar
+    wget xclip xcolor xorg xorg-xinit yazi zbar
 
 # generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -165,15 +165,6 @@ sed -i "s/#Color/Color/" /etc/pacman.conf
 sed -i "s/#ParallelDownloads = 5/ParallelDownloads = 5\nILoveCandy/" /etc/pacman.conf
 sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
 
-# change lightdm configuration
-sed -i "s/^#greeter-session=.*/greeter-session=lightdm-slick-greeter/" /etc/lightdm/lightdm.conf
-cat <<GREETER > /etc/lightdm/slick-greeter.conf
-[Greeter]
-icon-theme-name=Papirus-Dark
-clock-format=%H:%M:%S
-draw-grid=false
-GREETER
-
 # change makepkg configuration
 sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman purge\
  !debug lto)/" /etc/makepkg.conf
@@ -198,7 +189,6 @@ fi
 
 # enable services
 systemctl enable NetworkManager
-systemctl enable lightdm
 systemctl enable firewalld
 systemctl enable bluetooth
 if [ "$DEVICE" == "laptop" ];
