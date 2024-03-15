@@ -103,7 +103,7 @@ pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmwar
     pavucontrol pipewire-pulse polybar python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
     starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
     trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome unarchiver usbutils vim virtualbox\
-    wget xclip xcolor xorg xorg-xinit yazi zbar
+    wget xclip xcolor xorg xorg-xinit yazi zbar zsh
 
 # generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -150,7 +150,7 @@ HOSTS
 echo root:$PASS | chpasswd
 
 # create user
-useradd -m -G users,wheel,video,audio,games -s /bin/bash $USER
+useradd -m -G users,wheel,video,audio,games -s /bin/zsh $USER
 echo $USER:$PASS | chpasswd
 
 # give sudo access to wheel group
