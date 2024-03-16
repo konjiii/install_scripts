@@ -23,9 +23,21 @@ done
 
 while :
 do
-    echo "GPU: nvidia/amd/intel?"
+    echo "GPU: nvidia/amd/intel/none?"
     read GPU
-    if [ "$GPU" == "nvidia" ] || [ "$GPU" == "amd" ] || [ "$GPU" == "intel" ];
+    if [ "$GPU" == "nvidia" ] || [ "$GPU" == "amd" ] || [ "$GPU" == "intel" ] || [ "$GPU" == "none" ];
+    then
+        break
+    else
+        echo "invalid input"
+    fi
+done
+
+while :
+do
+    echo "Do you have integrated graphics? yes/no"
+    read INTEGRATED
+    if [ "$INTEGRATED" == "yes" ] || [ "$INTEGRATED" == "no" ];
     then
         break
     else
@@ -95,14 +107,14 @@ sed -i "s/#\[multilib\]\n#Include.*/\[multilib\]\nInclude = \/etc\/pacman.d\/mir
 # install packages
 pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmware git sudo\
     neofetch htop $CPU-ucode ark atuin biber bluez bluez-utils btop chezmoi clang cmake copyq discord\
-    dosfstools dunst dust efibootmgr feh firewalld fuse2 gimp git\
+    dosfstools dunst dust efibootmgr feh fuse2 gimp git\
     github-cli go grub htop i3-wm i3lock imagemagick ipython kitty krita\
     libqalculate libreoffice-fresh links maim\
     mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
     pavucontrol pipewire-pulse playerctl python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
     starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
-    trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome unarchiver usbutils vim virtualbox\
+    trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome ufw unarchiver usbutils vim virtualbox\
     wget xclip xcolor xorg xorg-xinit yazi zbar zsh
 
 # generate fstab
@@ -178,9 +190,9 @@ elif [ "$DEVICE" == "desktop" ];
 then
     pacman -Syu picom polybar --noconfirm --needed
 fi
-if [ "$CPU" == "intel" ];
+if [ "$CPU" == "intel" ] && [ "$INTEGRATED" == "yes" ];
 then
-    pacman -Syu intel-media-driver libva-utils --noconfirm --needed
+    pacman -Syu vulkan-intel intel-media-driver libva-utils mesa --noconfirm --needed
 fi
 if [ "$GPU" == "nvidia" ];
 then
@@ -189,7 +201,6 @@ fi
 
 # enable services
 systemctl enable NetworkManager
-systemctl enable firewalld
 systemctl enable bluetooth
 if [ "$DEVICE" == "laptop" ];
 then
@@ -227,6 +238,43 @@ POWERTOP
 
     systemctl enable i3lock
     systemctl enable powertop
+fi
+
+# setup ufw
+systemctl enable ufw
+systemctl start ufw
+ufw default deny
+ufw allow from 192.168.0.0/24
+ufw limit ssh
+ufw enable
+
+# accept forwarding in ufw for vpns
+sed -i "s/^DEFAULT_FORWARD_POLICY=.*/DEFAULT_FORWARD_POLICY=\"ACCEPT\"/" /etc/default/ufw
+sed -i "s%^#net/ipv4/ip_forward=1%net/ipv4/ip_forward=1%" /etc/ufw/sysctl.conf
+sed -i "s%^#net/ipv6/conf/default/forwarding=1%net/ipv6/conf/default/forwarding=1%" /etc/ufw/sysctl.conf
+sed -i "s%^#net/ipv6/conf/all/forwarding=1%net/ipv6/conf/all/forwarding=1%" /etc/ufw/sysctl.conf
+
+if [ "$DEVICE" == "laptop" ];
+then
+    # turn off graphics card
+    cat <<BLACKLIST > /etc/modprobe.d/blacklist-nouveau.conf
+    blacklist nouveau
+    options nouveau modeset=0
+BLACKLIST
+
+    cat <<REMOVE > /etc/udev/rules.d/00-remove-nvidia.rules
+    # Remove NVIDIA USB xHCI Host Controller devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+
+    # Remove NVIDIA USB Type-C UCSI devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+
+    # Remove NVIDIA Audio devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+
+    # Remove NVIDIA VGA/3D controller devices
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+REMOVE
 fi
 
 curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/post_reboot.sh\

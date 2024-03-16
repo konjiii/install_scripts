@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-# set up optimus-manager
+# regenerate Xorg config
 if [ "$DEVICE" == "laptop" ];
 then
-    sudo sed -i "s/^startup_mode=.*/startup_mode=auto/" /etc/optimus-manager/optimus-manager.conf
+    sudo Xorg -configure
+    sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
 fi
 
 # add windows to grub menu
