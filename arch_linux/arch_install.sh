@@ -6,7 +6,7 @@ lsblk
 # ask required information
 echo "enter disk:"
 read DISK
-cfdisk /dev/$DISK
+cfdisk $DISK
 
 lsblk
 
@@ -42,21 +42,18 @@ while :
 do
     echo "laptop/desktop?"
     read DEVICE
-    if [ "$DEVICE" == "laptop" ] || [ "$DEVICE" == "desktop" ];
+    if [ "$DEVICE" == "laptop" ];
     then
+        CPU="intel"
+        break
+    elif [ "$DEVICE" == "desktop" ];
+    then
+        CPU="amd"
         break
     else
         echo "invalid input"
     fi
 done
-
-if [ "$DEVICE" == "laptop" ];
-then
-    CPU="intel"
-elif [ "$DEVICE" == "desktop" ];
-then
-    CPU="amd"
-fi
 
 ls /usr/share/zoneinfo/
 
@@ -94,15 +91,15 @@ echo "timezone: $TIMEZONE"
 
 echo "formatting partitions"
 # format partitions
-mkfs.fat -F32 /dev/$EFI
-mkfs.btrfs /dev/$ROOT
-mkswap /dev/$SWAP
+mkfs.fat -F32 $EFI
+mkfs.btrfs $ROOT
+mkswap $SWAP
 
 echo "mounting partitions"
 # mount partitions
-mount /dev/$ROOT /mnt
-mount --mkdir /dev/$EFI /mnt/boot
-swapon /dev/$SWAP
+mount $ROOT /mnt
+mount --mkdir $EFI /mnt/boot
+swapon $SWAP
 
 echo "enabling parallel downloads and multilib"
 # turn on parallel downloads and multilib
@@ -132,12 +129,12 @@ echo "generating post chroot script (post_chroot.sh)"
 cat <<EOF > /mnt/post_chroot.sh
 echo "setting timezone"
 # set timezone
-TIMEZONE=$(find /usr/share/zoneinfo/ -maxdepth 2 -name $TIMEZONE)
+TIMEZONE=/usr/share/zoneinfo/$TIMEZONE
 ln -sf $TIMEZONE /etc/localtime
 hwclock --systohc
 systemctl enable systemd-timesyncd
 
-echo "generating locales
+echo "generating locales"
 # set and generate locales
 sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen
 locale-gen
@@ -189,7 +186,7 @@ echo $USER:$PASS | chpasswd
 
 echo "giving sudo access to wheel group"
 # give sudo access to wheel group
-sed -i "s/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
+sed -i "s/^# %wheel ALL=\(ALL:ALL\) ALL/%wheel ALL=\(ALL:ALL\) ALL/" /etc/sudoers
 
 echo "installing grub"
 # install grub
@@ -205,8 +202,8 @@ sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /e
 
 echo "changing makepkg configuration"
 # change makepkg configuration
-sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman purge\
- !debug lto)/" /etc/makepkg.conf
+sed -i "s/^OPTIONS=.*/OPTIONS=\(strip docs !libtool !staticlibs !emptydirs zipman purge\
+ !debug lto\)/" /etc/makepkg.conf
 
 # install packages depending on device
 if [ "$DEVICE" == "laptop" ];
