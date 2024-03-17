@@ -36,6 +36,13 @@ sudo sed -i "s/GRUB_DISABLE_RECOVERY=true/#GRUB_DISABLE_RECOVERY=true/" /etc/def
 echo "rebuilding grub config"
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
+echo "installing rustup"
+# install rustup and rust-analyzer
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+echo "installing rust-analyzer"
+rustup component add rust-analyzer
+
 # setup paru
 cd /home/$USER
 echo "downloading paru from AUR"
@@ -49,34 +56,31 @@ cd ..
 echo "removing paru git repository"
 rm -rf paru
 echo "changing directory to root"
-cd /
 
 echo "installing AUR packages"
 # install AUR packages using paru
 paru -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
     visual-studio-code-insiders-bin nordvpn-bin --noconfirm --needed
 
-echo "installing rustup"
-# install rustup and rust-analyzer
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
-echo "installing rust-analyzer"
-rustup component add rust-analyzer
+while :
+do
+    echo "laptop/desktop?"
+    read DEVICE
+    if [ "$DEVICE" == "laptop" ];
+    then
+        paru -Syu wifi-qr --noconfirm --needed
+        break
+    elif [ "$DEVICE" == "desktop" ];
+    then
+        echo "turning off wake on mouse"
+        # turn off wake on mouse
+        attrs=$(lsusb | grep Logitech | awk '{print $6;}')
+        idVendor=$(echo $attrs | cut -d':' -f1)
+        idProduct=$(echo $attrs | cut -d':' -f2)
+        usbController=$(grep $idProduct /sys/bus/usb/devices/*/idProduct | cut -d'/' -f6)
 
-echo "initializing chezmoi and applying dotfiles from \
- https://github.com/konjiii/dotfiles.git"
-# setup chezmoi
-chezmoi init --apply https://github.com/konjiii/dotfiles.git
-
-echo "turning off wake on mouse"
-# turn off wake on mouse
-attrs=$(lsusb | grep Logitech | awk '{print $6;}')
-idVendor=$(echo $attrs | cut -d':' -f1)
-idProduct=$(echo $attrs | cut -d':' -f2)
-usbController=$(grep $idProduct /sys/bus/usb/devices/*/idProduct | cut -d'/' -f6)
-
-echo "creating script to turn off wake on mouse on boot (mouse_wake.sh)"
-cat <<EOF > ./mouse_wake.sh
+        echo "creating script to turn off wake on mouse on boot (mouse_wake.sh)"
+        cat <<EOF > ./mouse_wake.sh
 echo "creating udev rule to turn off wake on mouse"
 cat <<MOUSE > /etc/udev/rules.d/50-wake-on-device.rules
 ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="$idVendor", \
@@ -85,11 +89,23 @@ ATTR{driver/$usbController/power/wakeup}="disabled"
 MOUSE
 EOF
 
-echo "executing script mouse_wake.sh"
-sudo sh ./mouse_wake.sh
+        echo "executing script mouse_wake.sh"
+        sudo sh ./mouse_wake.sh
 
-echo "removing script mouse_wake.sh"
-rm ./mouse_wake.sh
+        echo "removing script mouse_wake.sh"
+        rm ./mouse_wake.sh
+
+        break
+    else
+        echo "invalid input"
+        continue
+    fi
+done
+
+echo "initializing chezmoi and applying dotfiles from \
+ https://github.com/konjiii/dotfiles.git"
+# setup chezmoi
+chezmoi init --apply https://github.com/konjiii/dotfiles.git
 
 echo "removing current script"
 # remove post reboot script

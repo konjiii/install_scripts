@@ -6,7 +6,7 @@ lsblk
 # ask required information
 echo "enter disk:"
 read DISK
-cfdisk $DISK
+cfdisk /dev/$DISK
 
 lsblk
 
@@ -91,15 +91,15 @@ echo "timezone: $TIMEZONE"
 
 echo "formatting partitions"
 # format partitions
-mkfs.fat -F32 $EFI
-mkfs.btrfs $ROOT
-mkswap $SWAP
+mkfs.fat -F32 /dev/$EFI
+mkfs.btrfs /dev/$ROOT
+mkswap /dev/$SWAP
 
 echo "mounting partitions"
 # mount partitions
-mount $ROOT /mnt
-mount --mkdir $EFI /mnt/boot
-swapon $SWAP
+mount /dev/$ROOT /mnt
+mount --mkdir /dev/$EFI /mnt/boot
+swapon /dev/$SWAP
 
 echo "enabling parallel downloads and multilib"
 # turn on parallel downloads and multilib
@@ -112,7 +112,7 @@ pacstrap -K /mnt base base-devel linux-lts linux linux-firmware git sudo\
     neofetch htop $CPU-ucode ark atuin biber bluez bluez-utils btop chezmoi clang cmake copyq discord\
     dosfstools dunst dust efibootmgr feh fuse2 gimp git\
     github-cli go grub htop i3-wm i3lock imagemagick ipython kitty krita\
-    libqalculate libreoffice-fresh links maim\
+    libqalculate libreoffice-fresh links maim nodejs-lts-iron\
     mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
     noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
     pavucontrol pipewire-pulse playerctl python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
@@ -186,7 +186,7 @@ echo $USER:$PASS | chpasswd
 
 echo "giving sudo access to wheel group"
 # give sudo access to wheel group
-sed -i "s/^# %wheel ALL=\(ALL:ALL\) ALL/%wheel ALL=\(ALL:ALL\) ALL/" /etc/sudoers
+sed -i "s/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
 echo "installing grub"
 # install grub
@@ -202,15 +202,15 @@ sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /e
 
 echo "changing makepkg configuration"
 # change makepkg configuration
-sed -i "s/^OPTIONS=.*/OPTIONS=\(strip docs !libtool !staticlibs !emptydirs zipman purge\
- !debug lto\)/" /etc/makepkg.conf
+sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman purge\
+ !debug lto)/" /etc/makepkg.conf
 
 # install packages depending on device
 if [ "$DEVICE" == "laptop" ];
 then
     echo "installing laptop packages"
     pacman -Syu tlp tlp-rdw smartmontools brightnessctl powertop\
-        wifi-qr i3status vulkan-intel intel-media-driver libva-utils
+        i3status vulkan-intel intel-media-driver libva-utils\
         mesa --noconfirm --needed
 elif [ "$DEVICE" == "desktop" ];
 then
