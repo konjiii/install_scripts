@@ -50,6 +50,14 @@ do
     fi
 done
 
+if [ "$DEVICE" == "laptop" ];
+then
+    CPU="intel"
+elif [ "$DEVICE" == "desktop" ];
+then
+    CPU="amd"
+fi
+
 ls /usr/share/zoneinfo/
 
 while :
