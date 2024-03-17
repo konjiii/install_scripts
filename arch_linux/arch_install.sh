@@ -105,7 +105,7 @@ sed -i "s/#ParallelDownloads = 5/ParallelDownloads = 5/" /etc/pacman.conf
 sed -i "s/#\[multilib\]\n#Include.*/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
 
 # install packages
-pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux linux-firmware git sudo\
+pacstrap -K /mnt base base-devel linux-lts linux linux-headers linux-firmware git sudo\
     neofetch htop $CPU-ucode ark atuin biber bluez bluez-utils btop chezmoi clang cmake copyq discord\
     dosfstools dunst dust efibootmgr feh fuse2 gimp git\
     github-cli go grub htop i3-wm i3lock imagemagick ipython kitty krita\
@@ -196,7 +196,7 @@ then
 fi
 if [ "$GPU" == "nvidia" ];
 then
-    pacman -Syu nvidia-lts nvidia-settings --noconfirm --needed
+    pacman -Syu nvidia nvidia-settings --noconfirm --needed
 fi
 
 # enable services

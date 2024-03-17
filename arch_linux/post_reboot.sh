@@ -29,6 +29,12 @@ sudo mount /dev/$WIN_EFI /boot/EFI
 
 sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3\"/" /etc/default/grub
 
+# make linux (non lts) the default kernel
+sudo sed -i "s/version_sort -r/version_sort -V/" /etc/grub.d/10_linux
+
+# turn on generation of recovery mode menu entries
+sudo sed -i "s/GRUB_DISABLE_RECOVERY=true/#GRUB_DISABLE_RECOVERY=true/" /etc/default/grub
+
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # setup paru
