@@ -226,23 +226,6 @@ then
     echo "enabling laptop services"
     systemctl enable tlp
 
-    echo "making i3lock service"
-    # enable i3lock on suspend
-    cat <<I3LOCK > /etc/systemd/system/i3lock.service
-    [Unit]
-    Description=i3lock on suspend
-    Before=sleep.target
-
-    [Service]
-    User=$USER
-    Type=forking
-    Environment=DISPLAY=:0
-    ExecStart=/usr/bin/i3lock -c 141413
-
-    [Install]
-    WantedBy=sleep.target
-I3LOCK
-    
     echo "making powertop service"
     # enable powertop auto-tune on boot
     cat <<POWERTOP > /etc/systemd/system/powertop.service
@@ -258,8 +241,7 @@ I3LOCK
     WantedBy=multi-user.target
 POWERTOP
 
-    echo "enabling i3lock and powertop services"
-    systemctl enable i3lock
+    echo "enabling powertop services"
     systemctl enable powertop
 elif [ "$DEVICE" == "desktop" ];
 then
