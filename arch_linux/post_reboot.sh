@@ -43,33 +43,10 @@ source $HOME/.cargo/env
 echo "installing rust-analyzer"
 rustup component add rust-analyzer
 
-# setup paru
-cd /home/$USER
-echo "downloading paru from AUR"
-git clone https://aur.archlinux.org/paru.git
-echo "changing directory to paru"
-cd paru
-echo "installing paru"
-makepkg -si --noconfirm --needed
-echo "exiting paru directory"
-cd ..
-echo "removing paru git repository"
-rm -rf paru
-echo "changing directory to root"
-
-echo "installing AUR packages"
-# install AUR packages using paru
-paru -Syu eclipse-java floorp-bin github-desktop miniconda3 qrcp tdrop-git\
-    visual-studio-code-insiders-bin nordvpn-bin --noconfirm --needed
-
 while :
 do
     echo "laptop/desktop?"
     read DEVICE
-    if [ "$DEVICE" == "laptop" ];
-    then
-        paru -Syu wifi-qr --noconfirm --needed
-        break
     elif [ "$DEVICE" == "desktop" ];
     then
         echo "turning off wake on mouse"
@@ -101,6 +78,24 @@ EOF
         continue
     fi
 done
+
+# setup paru
+cd /home/$USER
+echo "downloading paru from AUR"
+git clone https://aur.archlinux.org/paru.git
+echo "changing directory to paru"
+cd paru
+echo "installing paru"
+makepkg -si --noconfirm --needed
+echo "exiting paru directory"
+cd ..
+echo "removing paru git repository"
+rm -rf paru
+echo "changing directory to root"
+
+echo "installing AUR packages"
+# install AUR packages using paru
+paru -Syu $(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/packages/$DEVICE/aur) --noconfirm --needed
 
 echo "initializing chezmoi and applying dotfiles from \
  https://github.com/konjiii/dotfiles.git"

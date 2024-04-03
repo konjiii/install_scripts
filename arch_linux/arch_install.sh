@@ -108,18 +108,8 @@ sed -i "s&#\[multilib\]&\[multilib\]\nInclude = /etc/pacman.d/mirrorlist&" /etc/
 
 echo "installing base packages"
 # install packages
-pacstrap -K /mnt base base-devel linux-lts linux linux-firmware git sudo\
-    neofetch htop $CPU-ucode ark atuin biber bluez bluez-utils btop chezmoi clang cmake copyq discord\
-    dosfstools dunst dust efibootmgr feh fuse2 gimp git\
-    github-cli go grub htop sway swayidle swaylock imagemagick ipython kitty krita\
-    libqalculate libreoffice-fresh links maim nodejs-lts-iron\
-    mpv mtools neofetch neovim networkmanager notification-daemon noto-fonts noto-fonts-cjk\
-    noto-fonts-emoji npm okular os-prober p7zip pacman-contrib pamixer papirus-icon-theme\
-    pavucontrol pipewire-pulse playerctl python-gobject qbittorrent rofi speedtest-cli spotify-launcher\
-    starship sudo telegram-desktop texlive thefuck tldr torbrowser-launcher translate-shell\
-    trash-cli ttf-cascadia-code-nerd ttf-dejavu ttf-font-awesome ufw unarchiver usbutils vim virtualbox\
-    wget xclip xcolor wayland yazi zbar zsh
-
+pacstrap -K /mnt base base-devel linux-lts linux linux-firmware sudo $CPU-ucode
+    
 echo "generating file system table"
 # generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -139,19 +129,6 @@ echo "generating locales"
 sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
-
-# echo "settings keyboard configuration"
-# # set keyboard config
-# cat <<KEYBOARD > /etc/X11/xorg.conf.d/00-keyboard.conf
-# Section "InputClass"
-#         Identifier "system-keyboard"
-#         MatchIsKeyboard "on"
-#         Option "XkbLayout" "us"
-#         Option "XkbModel" "pc105"
-#         Option "XkbVariant" ",qwerty"
-#         Option "XkbOptions" "caps:escape,altwin:swap_lalt_lwin"
-# EndSection
-# KEYBOARD
 
 echo "setting hostname and hosts"
 # set hostname and hosts
@@ -188,12 +165,6 @@ echo "giving sudo access to wheel group"
 # give sudo access to wheel group
 sed -i "s/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
-echo "installing grub"
-# install grub
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-echo "generating grub configuration"
-grub-mkconfig -o /boot/grub/grub.cfg
-
 echo "changing pacman configuration"
 # change pacman configuration
 sed -i "s/#Color/Color/" /etc/pacman.conf
@@ -203,20 +174,16 @@ sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /e
 echo "changing makepkg configuration"
 # change makepkg configuration
 sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman purge\
- !debug lto)/" /etc/makepkg.conf
+    !debug lto)/" /etc/makepkg.conf
 
-# install packages depending on device
-if [ "$DEVICE" == "laptop" ];
-then
-    echo "installing laptop packages"
-    pacman -Syu tlp tlp-rdw smartmontools brightnessctl powertop\
-        i3status vulkan-intel intel-media-driver libva-utils\
-        mesa --noconfirm --needed
-elif [ "$DEVICE" == "desktop" ];
-then
-    echo "installing desktop packages"
-    pacman -Syu picom polybar nvidia nvidia-settings --noconfirm --needed
-fi
+echo "installing native packages"
+pacman -Syu \$(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/packages/$DEVICE/pacman) --noconfirm --needed
+
+echo "installing grub"
+# install grub
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+echo "generating grub configuration"
+grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "enabling general services"
 # enable services
@@ -290,14 +257,6 @@ BLACKLIST
     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
 REMOVE
 fi
-
-# # regenerate Xorg config
-# if [ "$DEVICE" == "laptop" ];
-# then
-#     echo "regenerating Xorg config"
-#     Xorg -configure
-#     mv /root/xorg.conf.new /etc/X11/xorg.conf
-# fi
 
 echo "downloading post reboot script (post_reboot.sh)"
 curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/post_reboot.sh\
