@@ -47,6 +47,9 @@ while :
 do
     echo "laptop/desktop?"
     read DEVICE
+    if [ "$DEVICE" == "laptop" ];
+    then
+        break
     elif [ "$DEVICE" == "desktop" ];
     then
         echo "turning off wake on mouse"
