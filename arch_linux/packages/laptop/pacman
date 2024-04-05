@@ -71,6 +71,7 @@ python-numpy
 python-pip
 python-scipy
 qbittorrent
+r
 rofi
 slurp
 smartmontools
