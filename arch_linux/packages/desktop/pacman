@@ -1,3 +1,4 @@
+amd-ucode
 ark
 atuin
 base
@@ -6,8 +7,8 @@ bat
 biber
 bluez
 bluez-utils
-brightnessctl
 btop
+btrfs-progs
 chezmoi
 clang
 cmake
@@ -20,6 +21,7 @@ dust
 efibootmgr
 ethtool
 feh
+firefox
 fzf
 git
 github-cli
@@ -29,7 +31,6 @@ grub
 htop
 i3status
 imagemagick
-intel-media-driver
 intel-ucode
 ipython
 kitty
@@ -37,11 +38,9 @@ krita
 libqalculate
 libreoffice-fresh
 libsixel
-libva-utils
 links
 linux
 linux-firmware
-linux-headers
 linux-lts
 maim
 mpv
@@ -50,7 +49,6 @@ nasm
 neofetch
 neovim
 networkmanager
-nm-connection-editor
 notepadqq
 notification-daemon
 noto-fonts
@@ -64,9 +62,9 @@ pacman-contrib
 pamixer
 papirus-icon-theme
 pavucontrol
+picom
 pipewire-pulse
 playerctl
-powertop
 python-matplotlib
 python-numpy
 python-pip
@@ -75,7 +73,6 @@ qbittorrent
 r
 rofi
 slurp
-smartmontools
 speedtest-cli
 spotify-launcher
 starship
@@ -109,8 +106,6 @@ texlive-publishers
 texlive-xetex
 thefuck
 tldr
-tlp
-tlp-rdw
 torbrowser-launcher
 translate-shell
 trash-cli
@@ -120,10 +115,10 @@ ttf-font-awesome
 ufw
 unarchiver
 unzip
+usbutils
 vim
 virtualbox
-virtualbox-host-modules-arch
-vulkan-intel
+vulkan-nouveau
 wget
 wl-clipboard
 xdg-utils

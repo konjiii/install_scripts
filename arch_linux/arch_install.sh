@@ -119,8 +119,7 @@ echo "generating post chroot script (post_chroot.sh)"
 cat <<EOF > /mnt/post_chroot.sh
 echo "setting timezone"
 # set timezone
-TIMEZONE=/usr/share/zoneinfo/$TIMEZONE
-ln -sf $TIMEZONE /etc/localtime
+ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
 systemctl enable systemd-timesyncd
 
