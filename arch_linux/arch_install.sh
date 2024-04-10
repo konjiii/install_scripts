@@ -176,7 +176,7 @@ sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman
     !debug lto)/" /etc/makepkg.conf
 
 echo "installing native packages"
-pacman -Syu \$(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/packages/$DEVICE/pacman) --noconfirm --needed
+pacman -Syu \$(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/packages/$DEVICE/pacman) --needed
 
 echo "installing grub"
 # install grub

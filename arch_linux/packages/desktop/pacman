@@ -21,7 +21,6 @@ dust
 efibootmgr
 ethtool
 feh
-firefox
 fzf
 git
 github-cli
@@ -29,6 +28,9 @@ go
 grim
 grub
 htop
+hyprland
+hyprpaper
+i3-wm
 i3status
 imagemagick
 intel-ucode
@@ -41,6 +43,7 @@ libsixel
 links
 linux
 linux-firmware
+linux-headers
 linux-lts
 maim
 mpv
@@ -55,6 +58,10 @@ noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 npm
+nvidia
+nvidia-settings
+nvidia-utils
+obs-studio
 okular
 openssh
 os-prober
@@ -70,12 +77,14 @@ python-numpy
 python-pip
 python-scipy
 qbittorrent
+qt5ct
 r
 rofi
 slurp
 speedtest-cli
 spotify-launcher
 starship
+steam
 sudo
 sway
 swaybg
@@ -118,10 +127,13 @@ unzip
 usbutils
 vim
 virtualbox
-vulkan-nouveau
+waybar
 wget
 wl-clipboard
+wofi
+xdg-desktop-portal-hyprland
 xdg-utils
+xf86-video-vesa
 xorg-bdftopcf
 xorg-docs
 xorg-font-util
@@ -129,6 +141,7 @@ xorg-fonts-100dpi
 xorg-fonts-75dpi
 xorg-iceauth
 xorg-mkfontscale
+xorg-server
 xorg-server-devel
 xorg-server-xephyr
 xorg-server-xnest
@@ -137,6 +150,7 @@ xorg-sessreg
 xorg-smproxy
 xorg-x11perf
 xorg-xauth
+xorg-xbacklight
 xorg-xcmsdb
 xorg-xcursorgen
 xorg-xdpyinfo
@@ -144,6 +158,7 @@ xorg-xdriinfo
 xorg-xev
 xorg-xgamma
 xorg-xhost
+xorg-xinit
 xorg-xinput
 xorg-xkbevd
 xorg-xkbutils

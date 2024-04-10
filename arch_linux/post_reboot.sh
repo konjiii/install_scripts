@@ -89,7 +89,7 @@ git clone https://aur.archlinux.org/paru.git
 echo "changing directory to paru"
 cd paru
 echo "installing paru"
-makepkg -si --noconfirm --needed
+makepkg -si --needed
 echo "exiting paru directory"
 cd ..
 echo "removing paru git repository"
@@ -98,7 +98,7 @@ echo "changing directory to root"
 
 echo "installing AUR packages"
 # install AUR packages using paru
-paru -Syu $(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/packages/$DEVICE/aur) --noconfirm --needed
+paru -Syu $(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/packages/$DEVICE/aur) --needed
 
 echo "initializing chezmoi and applying dotfiles from \
  https://github.com/konjiii/dotfiles.git"
