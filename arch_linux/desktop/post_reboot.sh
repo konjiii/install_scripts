@@ -22,8 +22,8 @@ done
 echo "mounting windows EFI partition (/dev/$WIN_EFI) to /boot/EFI"
 sudo mount /dev/$WIN_EFI /boot/EFI
 
-echo "setting systemd boot log to verbose"
-sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3\"/" /etc/default/grub
+echo "setting systemd boot log to verbose and enabling nvidia modeset"
+sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\".*\"/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 nvidia_drm.modeset=1\"/" /etc/default/grub
 
 echo "updating the default kernel"
 # make linux (non lts) the default kernel
@@ -36,12 +36,42 @@ sudo sed -i "s/GRUB_DISABLE_RECOVERY=true/#GRUB_DISABLE_RECOVERY=true/" /etc/def
 echo "rebuilding grub config"
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
+# setting up settings to use hyprland with nvidia gpu
+sudo sed -i "s/MODULES=(.*)/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/" /etc/mkinitcpio.conf
+echo "options nvidia-drm modeset=1" | sudo tee -a /etc/modprobe.d/nvidia.conf
+
+# rebuild initramfs
+sudo mkinitcpio --config /etc/mkinitcpio.conf --generate /boot/initramfs-custom.img
+
 echo "installing rustup"
 # install rustup and rust-analyzer
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
 echo "installing rust-analyzer"
 rustup component add rust-analyzer
+
+echo "turning off wake on mouse"
+# turn off wake on mouse
+attrs=$(lsusb | grep Logitech | awk '{print $6;}')
+idVendor=$(echo $attrs | cut -d':' -f1)
+idProduct=$(echo $attrs | cut -d':' -f2)
+usbController=$(grep $idProduct /sys/bus/usb/devices/*/idProduct | cut -d'/' -f6)
+
+echo "creating script to turn off wake on mouse on boot (mouse_wake.sh)"
+cat <<EOF > ./mouse_wake.sh
+echo "creating udev rule to turn off wake on mouse"
+cat <<MOUSE > /etc/udev/rules.d/50-wake-on-device.rules
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="$idVendor", \
+ATTRS{idProduct}=="$idProduct", ATTR{power/wakeup}="disabled", \
+ATTR{driver/$usbController/power/wakeup}="disabled"
+MOUSE
+EOF
+
+echo "executing script mouse_wake.sh"
+sudo sh ./mouse_wake.sh
+
+echo "removing script mouse_wake.sh"
+rm ./mouse_wake.sh
 
 # setup paru
 cd /home/$USER
