@@ -38,23 +38,6 @@ do
     fi
 done
 
-while :
-do
-    echo "laptop/desktop?"
-    read DEVICE
-    if [ "$DEVICE" == "laptop" ];
-    then
-        CPU="intel"
-        break
-    elif [ "$DEVICE" == "desktop" ];
-    then
-        CPU="amd"
-        break
-    else
-        echo "invalid input"
-    fi
-done
-
 ls /usr/share/zoneinfo/
 
 while :
@@ -108,7 +91,7 @@ sed -i "s&#\[multilib\]&\[multilib\]\nInclude = /etc/pacman.d/mirrorlist&" /etc/
 
 echo "installing base packages"
 # install packages
-pacstrap -K /mnt base base-devel linux-lts linux linux-firmware sudo $CPU-ucode
+pacstrap -K /mnt base base-devel linux-lts linux linux-firmware sudo intel-ucode
     
 echo "generating file system table"
 # generate fstab
@@ -131,13 +114,7 @@ echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 echo "setting hostname and hosts"
 # set hostname and hosts
-if [ "$DEVICE" == "laptop" ];
-then
-    echo "archlaptop" > /etc/hostname
-elif [ "$DEVICE" == "desktop" ];
-then
-    echo "archlinux" > /etc/hostname
-fi
+echo "archlaptop" > /etc/hostname
 
 cat <<HOSTS > /etc/hosts
 # Static table lookup for hostnames.
@@ -146,11 +123,8 @@ cat <<HOSTS > /etc/hosts
 
 127.0.0.1		localhost
 ::1			    localhost
-127.0.1.1		archlinux.localdomain		archlinux
+127.0.1.1		archlaptop.localdomain		archlaptop
 HOSTS
-
-# if using a laptop change hostname in hosts
-sed -i "s/archlinux/archlaptop/g" /etc/hosts
 
 echo "setting root passwd and creating user"
 # set root passwd
@@ -176,7 +150,7 @@ sed -i "s/^OPTIONS=.*/OPTIONS=(strip docs !libtool !staticlibs !emptydirs zipman
     !debug lto)/" /etc/makepkg.conf
 
 echo "installing native packages"
-pacman -Syu \$(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/packages/$DEVICE/pacman) --needed
+pacman -Syu \$(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/laptop/packages/pacman) --needed
 
 echo "installing grub"
 # install grub
@@ -187,33 +161,26 @@ grub-mkconfig -o /boot/grub/grub.cfg
 echo "enabling general services"
 # enable services
 systemctl enable NetworkManager
-if [ "$DEVICE" == "laptop" ];
-then
-    echo "enabling laptop services"
-    systemctl enable tlp
+echo "enabling laptop services"
+systemctl enable tlp
 
-    echo "making powertop service"
-    # enable powertop auto-tune on boot
-    cat <<POWERTOP > /etc/systemd/system/powertop.service
-    [Unit]
-    Description=Powertop auto-tune
+echo "making powertop service"
+# enable powertop auto-tune on boot
+cat <<POWERTOP > /etc/systemd/system/powertop.service
+[Unit]
+Description=Powertop auto-tune
 
-    [Service]
-    Type=oneshot
-    RemainAfterExit=yes
-    ExecStart=/usr/bin/powertop --auto-tune
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/powertop --auto-tune
 
-    [Install]
-    WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
 POWERTOP
 
-    echo "enabling powertop services"
-    systemctl enable powertop
-elif [ "$DEVICE" == "desktop" ];
-then
-    echo "enabling desktop services"
-    systemctl enable bluetooth
-fi
+echo "enabling powertop services"
+systemctl enable powertop
 
 echo "enabling and starting uncomplicated firewall"
 # setup ufw
@@ -232,33 +199,30 @@ sed -i "s%^#net/ipv4/ip_forward=1%net/ipv4/ip_forward=1%" /etc/ufw/sysctl.conf
 sed -i "s%^#net/ipv6/conf/default/forwarding=1%net/ipv6/conf/default/forwarding=1%" /etc/ufw/sysctl.conf
 sed -i "s%^#net/ipv6/conf/all/forwarding=1%net/ipv6/conf/all/forwarding=1%" /etc/ufw/sysctl.conf
 
-if [ "$DEVICE" == "laptop" ];
-then
-    echo "blacklisting nvidia drivers"
-    # turn off graphics card
-    cat <<BLACKLIST > /etc/modprobe.d/blacklist-nouveau.conf
-    blacklist nouveau
-    options nouveau modeset=0
+echo "blacklisting nvidia drivers"
+# turn off graphics card
+cat <<BLACKLIST > /etc/modprobe.d/blacklist-nouveau.conf
+blacklist nouveau
+options nouveau modeset=0
 BLACKLIST
 
-    echo "adding udev rules to turn off nvidia gpu"
-    cat <<REMOVE > /etc/udev/rules.d/00-remove-nvidia.rules
-    # Remove NVIDIA USB xHCI Host Controller devices, if present
-    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+echo "adding udev rules to turn off nvidia gpu"
+cat <<REMOVE > /etc/udev/rules.d/00-remove-nvidia.rules
+# Remove NVIDIA USB xHCI Host Controller devices, if present
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
 
-    # Remove NVIDIA USB Type-C UCSI devices, if present
-    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+# Remove NVIDIA USB Type-C UCSI devices, if present
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
 
-    # Remove NVIDIA Audio devices, if present
-    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+# Remove NVIDIA Audio devices, if present
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
 
-    # Remove NVIDIA VGA/3D controller devices
-    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+# Remove NVIDIA VGA/3D controller devices
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
 REMOVE
-fi
 
 echo "downloading post reboot script (post_reboot.sh)"
-curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/post_reboot.sh\
+curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/laptop/post_reboot.sh\
     > /home/$USER/post_reboot.sh
 
 echo "removing current script"
