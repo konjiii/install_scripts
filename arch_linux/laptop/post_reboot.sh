@@ -80,11 +80,12 @@ echo "installing acer-wmi-battery"
 git clone https://github.com/frederik-h/acer-wmi-battery.git
 cd acer-wmi-battery
 make
-cd ~/
-rm -rf acer-wmi-battery
 
 echo "turning on acer battery health mode"
 sudo insmod acer-wmi-battery.ko enable_health_mode=1
+
+cd ~/
+rm -rf acer-wmi-battery
 
 echo "removing current script"
 # remove post reboot script
