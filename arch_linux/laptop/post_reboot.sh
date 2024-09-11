@@ -87,6 +87,9 @@ sudo insmod acer-wmi-battery.ko enable_health_mode=1
 cd ~/
 rm -rf acer-wmi-battery
 
+echo "setting dark mode"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
 echo "removing current script"
 # remove post reboot script
 rm ~/post_reboot.sh

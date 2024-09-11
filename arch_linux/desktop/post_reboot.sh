@@ -105,6 +105,9 @@ echo "initializing chezmoi and applying dotfiles from \
 # setup chezmoi
 chezmoi init --apply https://github.com/konjiii/dotfiles.git
 
+echo "setting dark mode"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
 echo "removing current script"
 # remove post reboot script
 rm ~/post_reboot.sh
