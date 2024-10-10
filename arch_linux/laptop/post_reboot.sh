@@ -25,9 +25,9 @@ sudo mount /dev/$WIN_EFI /boot/EFI
 echo "setting systemd boot log to verbose"
 sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3\"/" /etc/default/grub
 
-echo "updating the default kernel"
-# make linux (non lts) the default kernel
-sudo sed -i "s/version_sort -r/version_sort -V/" /etc/grub.d/10_linux
+# echo "updating the default kernel"
+# # make linux (non lts) the default kernel
+# sudo sed -i "s/version_sort -r/version_sort -V/" /etc/grub.d/10_linux
 
 echo "enabling grub recovery mode menu entries"
 # turn on generation of recovery mode menu entries
@@ -39,7 +39,7 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 echo "installing rustup"
 # install rustup and rust-analyzer
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
+. "$HOME/.cargo/env"
 echo "installing rust-analyzer"
 rustup component add rust-analyzer
 
