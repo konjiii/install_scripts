@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+sudo pacman -S github-cli
+
+echo "login to github"
+gh auth login
+
 echo "enabling os-prober in grub"
 # add windows to grub menu
 sudo sed -i "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=20/" /etc/default/grub
@@ -7,14 +12,12 @@ sudo sed -i "s/^#GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/" /etc/d
 
 lsblk
 
-while :
-do
+while :; do
     echo "enter windows EFI partition:"
     read WIN_EFI
     echo "you entered $WIN_EFI, is this correct? (y/n)"
     read ans
-    if [ "$ans" == "y" ];
-    then
+    if [ "$ans" == "y" ]; then
         break
     fi
 done
@@ -91,16 +94,24 @@ echo "installing AUR packages"
 # install AUR packages using paru
 paru -Syu $(curl https://raw.githubusercontent.com/konjiii/install_scripts/master/arch_linux/desktop/packages/aur) --needed
 
-echo "initializing chezmoi and applying dotfiles from \
+echo "initializing GNU stow and applying dotfiles from \
  https://github.com/konjiii/dotfiles.git"
-# setup chezmoi
-chezmoi init --apply https://github.com/konjiii/dotfiles.git
+# setup GNU stow
+cd /home/$USER
+git clone https://github.com/konjiii/dotfiles.git
+rm -rf .gitconfig
+cd dotfiles
+stow *
+cd ..
 
 echo "setting dark mode"
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 echo "installing tpm for tmux package management"
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+echo "installing pyenv-virtualenv plugin for pyenv"
+git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 
 echo "removing current script"
 # remove post reboot script
