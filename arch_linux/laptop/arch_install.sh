@@ -91,7 +91,7 @@ sed -i "s&#\[multilib\]&\[multilib\]\nInclude = /etc/pacman.d/mirrorlist&" /etc/
 
 echo "installing base packages"
 # install packages
-pacstrap -K /mnt base base-devel linux-lts linux linux-firmware sudo intel-ucode
+pacstrap -K /mnt base base-devel linux linux-firmware sudo intel-ucode
     
 echo "generating file system table"
 # generate fstab
