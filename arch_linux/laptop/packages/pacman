@@ -1,3 +1,4 @@
+7zip
 android-tools
 atuin
 base
@@ -11,12 +12,12 @@ brightnessctl
 btop
 clang
 cmake
-copyq
 discord
 dosfstools
 dunst
 dust
 efibootmgr
+emacs
 ethtool
 fcitx5
 fcitx5-configtool
@@ -31,12 +32,16 @@ github-cli
 gnu-netcat
 go
 godot
+gparted
 grim
 grub
 hypridle
 hyprland
 hyprlock
 hyprpaper
+hyprpicker
+hyprpolkitagent
+hyprsunset
 imagemagick
 intel-media-driver
 intel-ucode
@@ -72,7 +77,6 @@ okular
 opam
 openssh
 os-prober
-p7zip
 pacman-contrib
 pamixer
 papirus-icon-theme
@@ -88,6 +92,8 @@ python-ipykernel
 python-numpy
 python-pipx
 qbittorrent
+qt6ct
+ripgrep
 rofi-calc
 rofi-wayland
 rofimoji
@@ -99,6 +105,8 @@ starship
 steam
 stow
 sudo
+swi-prolog
+syncthing
 telegram-desktop
 texlive-basic
 texlive-bibtexextra
@@ -150,7 +158,6 @@ wine
 wl-clipboard
 wofi
 wtype
-xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
 xdg-utils
 xorg-bdftopcf
