@@ -1,6 +1,9 @@
 7zip
 android-tools
+ani-cli
+app2unit-git
 atuin
+balena-etcher
 base
 base-devel
 biber
@@ -10,9 +13,13 @@ bluez
 bluez-utils
 brightnessctl
 btop
+cava
+chaotic-keyring
+chaotic-mirrorlist
 clang
 cmake
 discord
+dnsmasq
 dosfstools
 dunst
 dust
@@ -29,6 +36,7 @@ gdb
 gimp
 git
 github-cli
+gnome-icon-theme
 gnu-netcat
 go
 godot
@@ -53,11 +61,13 @@ libqalculate
 libreoffice-fresh
 libsixel
 libva-utils
+libvirt
 links
 linux
 linux-firmware
 linux-headers
 love
+lshw
 luarocks
 mpv
 mtools
@@ -66,6 +76,7 @@ neofetch
 neovim
 networkmanager
 nm-connection-editor
+nordvpn-bin
 notification-daemon
 noto-fonts
 noto-fonts-cjk
@@ -80,6 +91,7 @@ os-prober
 pacman-contrib
 pamixer
 papirus-icon-theme
+paru
 pavucontrol
 pdcurses
 piper
@@ -92,6 +104,7 @@ python-ipykernel
 python-numpy
 python-pipx
 qbittorrent
+qemu-full
 qt6ct
 ripgrep
 rofi-calc
@@ -102,7 +115,6 @@ smartmontools
 speedtest-cli
 spotify-launcher
 starship
-steam
 stow
 sudo
 swi-prolog
@@ -148,8 +160,10 @@ ttf-jetbrains-mono-nerd
 ufw
 unarchiver
 unzip
+uwsm
 valgrind
 vim
+virt-manager
 vivaldi
 vulkan-intel
 waybar
